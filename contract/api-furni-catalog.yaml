@@ -1,0 +1,174 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:3020/api/v1
+    description: Development Server
+info:
+  title: API de catálogo de productos
+  version: 1.0.0
+  description: API para gestionar un catálogo de productos
+tags:
+  - name: Productos
+    description: Operaciones relacionadas con los productos del catálogo.
+paths:
+  /productos:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Lista de productos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+    post:
+      summary: Agregar un nuevo producto
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        "201":
+          description: Producto creado exitosamente
+        "400":
+          description: Parámetros de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /productos/{id}:
+    get:
+      summary: Obtener un producto por ID
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+          description: ID del producto a obtener
+      responses:
+        "200":
+          description: Producto obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Actualizar un producto por ID
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+          description: ID del producto a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        "204":
+          description: Producto eliminado exitosamente
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Datos del producto inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Eliminar un producto por ID
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+          description: ID del producto a eliminar
+      responses:
+        "204":
+          description: Producto eliminado exitosamente
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Producto:
+      type: object
+      required:
+        - nombre
+        - descripcion
+        - precio
+        - marca
+        - stock
+      properties:
+        nombre:
+          type: string
+          example: Butaca Nórdica
+        descripcion:
+          type: string
+          example: >-
+            Un diseño para el confort. Esta butaca está construida con maderas
+            estacionadas, cinchas y resortes, garantiza su durabilidad y
+            resistencia. Cuenta con una placa de supersoft de densidad variable
+            que se adapta al confort de cada persona.  Las patas son de madera
+            maciza, aportan calidez al diseño. En cuanto a los materiales de
+            tapizado, son a elección del cliente, permitiendo seleccionar
+            tejidos y tonos para  personalizarla según su estilo y decoración.
+        precio:
+          type: number
+          format: double
+          minimum: 0
+          example: 25600.51
+        marca:
+          type: string
+          example: Maverik
+        stock:
+          type: integer
+          minimum: 0
+          example: 45
+    Error:
+      type: object
+      properties:
+        fecha:
+          type: string
+          format: date-time
+          example: "2023-09-01T13:49:17.151+00:00"
+        error:
+          type: string
+          example: La solicitud no es correcta
