@@ -28,6 +28,12 @@ const swaggerOptions = {
                     },
                     required: ['nombre', 'descripcion', 'precio', 'marcar', 'stock'],
                 },
+                Comparador: {
+                    type: 'string',
+                    description: 'Operador de comparación',
+                    default: 'EQ',
+                    enum: ['LT', 'LTE', 'GT', 'GTE', 'EQ'],
+                },
                 Error: {
                     type: 'object',
                     properties: {

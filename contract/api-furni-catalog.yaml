@@ -15,6 +15,58 @@ paths:
       summary: Obtener todos los productos
       tags:
         - Productos
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre del producto
+          required: false
+          schema:
+            type: string
+            example: Butaca
+        - name: stock
+          in: query
+          description: Filtro por stock del producto
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            example: 20
+        - name: stockCompare
+          in: query
+          description: Operador de comparación para el filtro de stock
+          required: false
+          schema:
+            $ref: "#/components/schemas/Comparador"
+        - name: page
+          in: query
+          description: Número de pagina
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+            example: 1
+            minimum: 1
+        - name: size
+          in: query
+          description: Cantidad maxima de registros que se devolvera por página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+            example: 5
+            minimum: 1
+            maximum: 200
+        - name: sortBy
+          in: query
+          description: Campo de ordenamiento del resultado
+          required: false
+          schema:
+            type: string
+            default: name
+            example: precio
       responses:
         "200":
           description: Lista de productos obtenida exitosamente
@@ -162,6 +214,16 @@ components:
           type: integer
           minimum: 0
           example: 45
+    Comparador:
+      type: string
+      description: Operador de comparación
+      default: EQ
+      enum:
+        - LT
+        - LTE
+        - GT
+        - GTE
+        - EQ
     Error:
       type: object
       properties:

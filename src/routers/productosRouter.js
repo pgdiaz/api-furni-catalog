@@ -15,17 +15,73 @@ router.use(express.json());
  * @swagger
  * /productos:
  *   get:
- *     summary: Obtener todos los productos
+ *     summary: Búqueda paginada de productos
  *     tags: [Productos]
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         required: false
+ *         description: Filtro por nombre del producto
+ *         schema:
+ *           type: string
+ *           example: Butaca
+ *       - in: query
+ *         name: stock
+ *         required: false
+ *         description: Filtro por stock del producto
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *           minimum: 0
+ *           example: 20
+ *       - in: query
+ *         name: stockCompare
+ *         required: false
+ *         description: Operador de comparación para el filtro de stock
+ *         schema:
+ *           $ref: "#/components/schemas/Comparador"
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: Número de pagina
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           minimum: 1
+ *           example: 1
+ *       - in: query
+ *         name: size
+ *         required: false
+ *         description: Cantidad maxima de registros que se devolvera por página
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *           maximum: 200
+ *           example: 5
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: Campo de ordenamiento del resultado
+ *         schema:
+ *           type: string
+ *           default: name
+ *           example: precio
  *     responses:
  *       200:
- *         description: Lista de productos obtenida exitosamenteç
+ *         description: Lista de productos paginada obtenida exitosamente
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: "#/components/schemas/Producto"
+ *       400:
+ *         description: Parámetros de entrada inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -33,7 +89,7 @@ router.use(express.json());
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.get('/productos', ProductosController.getAllProductos);
+router.get('/productos', ProductosController.getAllProductosBy);
 
 /**
  * @swagger

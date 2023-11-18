@@ -2,8 +2,15 @@ const ProductosService = require('../services/productosService');
 
 class ProductosController {
 
-  static getAllProductos(req, res) {
-    ProductosService.getAllProductos((err, data) => {
+  static getAllProductosBy(req, res) {
+    // TODO: Validar minimo, limites, vacios, nulos y no definidos
+    const page = parseInt(req.query.page) || 1;
+    const size = parseInt(req.query.size) || 10;
+    const sortBy = req.query.sortBy || 'nombre';
+    const nombre = req.query.nombre;
+    const stock = req.query.stock;
+    const stockCompare = req.query.stockCompare;
+    ProductosService.getAllProductosBy(nombre, stock, stockCompare, page, size, sortBy, (err, data) => {
       if (err) {
         res.status(500).json({ fecha: new Date().toISOString(), error: err.message });
         return;
@@ -13,8 +20,8 @@ class ProductosController {
   }
 
   static getProductoById(req, res) {
-    const id = req.params.id;
-    if (!/^[1-9]\d*$/.test(id)) {
+    const id = parseInt(req.params.id);
+    if (id < 1) {
       return res.status(400).json({ error: 'ID del producto no válido' });
     }
     ProductosService.getProductoById(id, (err, data) => {
@@ -47,8 +54,8 @@ class ProductosController {
   }
 
   static updateProducto(req, res) {
-    const id = req.params.id;
-    if (!/^[1-9]\d*$/.test(id)) {
+    const id = parseInt(req.params.id);
+    if (id < 1) {
       return res.status(400).json({ error: 'ID del producto no válido' });
     }
     // TODO: Validar datos de entradas
@@ -71,8 +78,8 @@ class ProductosController {
   }
 
   static deleteProducto(req, res) {
-    const id = req.params.id;
-    if (!/^[1-9]\d*$/.test(id)) {
+    const id = parseInt(req.params.id);
+    if (id < 1) {
       return res.status(400).json({ error: 'ID del producto no válido' });
     }
     ProductosService.deleteProducto(id, (err, data) => {
