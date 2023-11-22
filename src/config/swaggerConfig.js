@@ -1,4 +1,5 @@
 const swaggerJSDoc = require('swagger-jsdoc');
+const config = require('./appConfig.json');
 
 const swaggerOptions = {
     definition: {
@@ -10,7 +11,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3020/api/v1',
+                url: `http://localhost:${config.server.port}/api/v1`,
                 description: 'Development Server',
             },
         ],

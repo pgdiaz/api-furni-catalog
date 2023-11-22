@@ -1,0 +1,16 @@
+{
+    "server": {
+        "port": 3020
+    },
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "sa",
+        "database": "furni",
+        "connectTimeout": 60000
+    },
+    "jwt": {
+        "secretKey": "api-subscription-key"
+    }
+}
