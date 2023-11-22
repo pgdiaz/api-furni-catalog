@@ -1,207 +1,22 @@
 openapi: 3.0.0
-servers:
-  - url: http://localhost:3020/api/v1
-    description: Development Server
 info:
   title: API de catálogo de productos
   version: 1.0.0
   description: API para gestionar un catálogo de productos
-tags:
-  - name: Productos
-    description: Operaciones relacionadas con los productos del catálogo.
-paths:
-  /productos:
-    get:
-      summary: Obtener todos los productos
-      tags:
-        - Productos
-      parameters:
-        - name: nombre
-          in: query
-          description: Filtro por nombre del producto
-          required: false
-          schema:
-            type: string
-            example: Butaca
-        - name: stock
-          in: query
-          description: Filtro por stock del producto
-          required: false
-          schema:
-            type: integer
-            format: int64
-            minimum: 0
-            example: 20
-        - name: stockCompare
-          in: query
-          description: Operador de comparación para el filtro de stock
-          required: false
-          schema:
-            $ref: "#/components/schemas/Comparador"
-        - name: page
-          in: query
-          description: Número de pagina
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 1
-            example: 1
-            minimum: 1
-        - name: size
-          in: query
-          description: Cantidad maxima de registros que se devolvera por página
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 10
-            example: 5
-            minimum: 1
-            maximum: 200
-        - name: sortBy
-          in: query
-          description: Campo de ordenamiento del resultado
-          required: false
-          schema:
-            type: string
-            default: name
-            example: precio
-      responses:
-        "200":
-          description: Lista de productos obtenida exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Producto"
-    post:
-      summary: Agregar un nuevo producto
-      tags:
-        - Productos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Producto"
-      responses:
-        "201":
-          description: Producto creado exitosamente
-        "400":
-          description: Parámetros de entrada inválidos
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /productos/{id}:
-    get:
-      summary: Obtener un producto por ID
-      tags:
-        - Productos
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-            example: 28
-          description: ID del producto a obtener
-      responses:
-        "200":
-          description: Producto obtenido exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Producto"
-        "404":
-          description: Producto no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    put:
-      summary: Actualizar un producto por ID
-      tags:
-        - Productos
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-            example: 28
-          description: ID del producto a actualizar
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Producto"
-      responses:
-        "204":
-          description: Producto eliminado exitosamente
-        "404":
-          description: Producto no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "400":
-          description: Datos del producto inválidos
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      summary: Eliminar un producto por ID
-      tags:
-        - Productos
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-            example: 28
-          description: ID del producto a eliminar
-      responses:
-        "204":
-          description: Producto eliminado exitosamente
-        "404":
-          description: Producto no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+servers:
+  - url: http://localhost:3020/api/v1
+    description: Development Server
 components:
   schemas:
     Producto:
       type: object
-      required:
-        - nombre
-        - descripcion
-        - precio
-        - marca
-        - stock
       properties:
         nombre:
           type: string
           example: Butaca Nórdica
         descripcion:
           type: string
-          example: >-
-            Un diseño para el confort. Esta butaca está construida con maderas
-            estacionadas, cinchas y resortes, garantiza su durabilidad y
-            resistencia. Cuenta con una placa de supersoft de densidad variable
-            que se adapta al confort de cada persona.  Las patas son de madera
-            maciza, aportan calidez al diseño. En cuanto a los materiales de
-            tapizado, son a elección del cliente, permitiendo seleccionar
-            tejidos y tonos para  personalizarla según su estilo y decoración.
+          example: Un diseño para el confort. Esta butaca está construida con maderas estacionadas, cinchas y resortes, garantiza su durabilidad y resistencia. Cuenta con una placa de supersoft de densidad variable que se adapta al confort de cada persona.  Las patas son de madera maciza, aportan calidez al diseño. En cuanto a los materiales de tapizado, son a elección del cliente, permitiendo seleccionar tejidos y tonos para  personalizarla según su estilo y decoración.
         precio:
           type: number
           format: double
@@ -214,6 +29,12 @@ components:
           type: integer
           minimum: 0
           example: 45
+      required:
+        - nombre
+        - descripcion
+        - precio
+        - marcar
+        - stock
     Comparador:
       type: string
       description: Operador de comparación
@@ -234,3 +55,371 @@ components:
         error:
           type: string
           example: La solicitud no es correcta
+      required:
+        - fecha
+        - mensaje
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+paths:
+  /login:
+    post:
+      summary: Iniciar sesión
+      description: Endpoint para iniciar sesión y obtener un token de acceso.
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: usuarioEjemplo
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: jwt-token-aqui
+        "401":
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fecha:
+                    type: string
+                    format: date-time
+                    example: "2023-09-01T13:49:17.151+00:00"
+                  error:
+                    type: string
+                    example: Credenciales inválidas
+  /productos:
+    get:
+      summary: Búqueda paginada de productos
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: nombre
+          required: false
+          description: Filtro por nombre del producto
+          schema:
+            type: string
+            example: Butaca
+        - in: query
+          name: stock
+          required: false
+          description: Filtro por stock del producto
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            example: 20
+        - in: query
+          name: stockCompare
+          required: false
+          description: Operador de comparación para el filtro de stock
+          schema:
+            $ref: "#/components/schemas/Comparador"
+        - in: query
+          name: page
+          required: false
+          description: Número de pagina
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            example: 1
+        - in: query
+          name: size
+          required: false
+          description: Cantidad maxima de registros que se devolvera por página
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 200
+            example: 5
+        - in: query
+          name: sortBy
+          required: false
+          description: Campo de ordenamiento del resultado
+          schema:
+            type: string
+            default: name
+            example: precio
+      responses:
+        "200":
+          description: Lista de productos paginada obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+        "400":
+          description: Parámetros de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Agregar un nuevo producto
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        "201":
+          description: Producto creado con éxito
+        "400":
+          description: Parámetros de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /productos/{id}:
+    get:
+      summary: Obtener un producto por ID
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del producto a obtener
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+      responses:
+        "200":
+          description: Producto obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        "400":
+          description: Parámetros de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Actualizar un producto por ID
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del producto a actualizar
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        "200":
+          description: Producto actualizado con éxito
+        "400":
+          description: Datos del producto inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Eliminar un producto por ID
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del producto a eliminar
+          schema:
+            type: integer
+            minimum: 1
+            example: 28
+      responses:
+        "204":
+          description: Producto eliminado exitosamente
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /productos/{id}/imagenes:
+    post:
+      summary: Subir imagen asociada a un producto
+      description: Sube una imagen asociada al producto identificado por su ID.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del producto.
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagen:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Imagen subida correctamente.
+        "400":
+          description: Error en el archivo o formato no permitido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                fecha: "2023-11-20T03:59:22.328Z"
+                error: Formato de archivo no permitido.
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                fecha: "2023-11-20T03:59:22.328Z"
+                error: Producto no encontrado.
+        "500":
+          description: Error en el servidor al cargar la imagen.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                fecha: "2023-11-20T03:59:22.328Z"
+                error: Error en el servidor al cargar la imagen.
+    get:
+      summary: Obtener una imagen asociada a un producto.
+      description: Retorna la imagen asociada a un producto en base a su ID.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: ID del producto.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Imagen encontrada y devuelta con éxito.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Producto no encontrado o imagen no encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                fecha: "2023-11-20T03:59:22.328Z"
+                error: Producto no encontrado.
+        "500":
+          description: Error en el servidor al obtener la imagen.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                fecha: "2023-11-20T03:59:22.328Z"
+                error: Error en el servidor.
+tags:
+  - name: Productos
+    description: Operaciones relacionadas con los productos del catálogo.

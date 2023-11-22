@@ -8,6 +8,9 @@ const config = require('./config/appConfig.json');
 
 const app = express();
 app.use(cors());
+app.get('/api-docs/json', (req, res) => {
+    res.json(swaggerDocs);
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api/v1', authRouter, productosRouter);
 
