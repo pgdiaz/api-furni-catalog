@@ -9,7 +9,6 @@ const swaggerOptions = {
             description: 'API para gestionar un catálogo de productos'
         },
         servers: [
-            // TODO: Obtener la configuración del server desde app.js o llevarlo a otro modulo
             {
                 url: 'http://localhost:3020/api/v1',
                 description: 'Development Server',
@@ -41,6 +40,13 @@ const swaggerOptions = {
                         error: { type: 'string', example: 'La solicitud no es correcta' }
                     },
                     required: ['fecha', 'mensaje'],
+                },
+            },
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'apiKey',
+                    name: 'Authorization',
+                    in: 'header',
                 },
             },
         },

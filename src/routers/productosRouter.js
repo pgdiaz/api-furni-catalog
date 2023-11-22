@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ProductosController = require('../controllers/productosController');
 const MutipartStorage = require('../middlewares/multipartStorage');
+const authFilter = require('../middlewares/authFilter');
 
 router.use(express.json());
 
@@ -18,6 +19,8 @@ router.use(express.json());
  *   get:
  *     summary: Búqueda paginada de productos
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: nombre
@@ -90,7 +93,7 @@ router.use(express.json());
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.get('/productos', ProductosController.getAllProductosBy);
+router.get('/productos', authFilter.requireAuth, ProductosController.getAllProductosBy);
 
 /**
  * @swagger
@@ -98,6 +101,8 @@ router.get('/productos', ProductosController.getAllProductosBy);
  *   get:
  *     summary: Obtener un producto por ID
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,7 +138,7 @@ router.get('/productos', ProductosController.getAllProductosBy);
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.get('/productos/:id', ProductosController.getProductoById);
+router.get('/productos/:id', authFilter.requireAuth, ProductosController.getProductoById);
 
 /**
  * @swagger
@@ -141,6 +146,8 @@ router.get('/productos/:id', ProductosController.getProductoById);
  *   post:
  *     summary: Agregar un nuevo producto
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -163,7 +170,7 @@ router.get('/productos/:id', ProductosController.getProductoById);
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.post('/productos', ProductosController.createProducto);
+router.post('/productos', authFilter.requireAuth, ProductosController.createProducto);
 
 /**
  * @swagger
@@ -171,6 +178,8 @@ router.post('/productos', ProductosController.createProducto);
  *   put:
  *     summary: Actualizar un producto por ID
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -208,7 +217,7 @@ router.post('/productos', ProductosController.createProducto);
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.put('/productos/:id', ProductosController.updateProducto);
+router.put('/productos/:id', authFilter.requireAuth, ProductosController.updateProducto);
 
 /**
  * @swagger
@@ -216,6 +225,8 @@ router.put('/productos/:id', ProductosController.updateProducto);
  *   delete:
  *     summary: Eliminar un producto por ID
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -241,7 +252,7 @@ router.put('/productos/:id', ProductosController.updateProducto);
  *             schema:
  *               $ref: "#/components/schemas/Error"
  */
-router.delete('/productos/:id', ProductosController.deleteProducto);
+router.delete('/productos/:id', authFilter.requireAuth, ProductosController.deleteProducto);
 
 /**
  * @swagger
@@ -250,6 +261,8 @@ router.delete('/productos/:id', ProductosController.deleteProducto);
  *     summary: Subir imagen asociada a un producto
  *     description: Sube una imagen asociada al producto identificado por su ID.
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -299,7 +312,7 @@ router.delete('/productos/:id', ProductosController.deleteProducto);
  *               fecha: "2023-11-20T03:59:22.328Z"
  *               error: Error en el servidor al cargar la imagen.
  */
-router.post('/productos/:id/imagenes', MutipartStorage.handleImageUpload, ProductosController.setImageProducto);
+router.post('/productos/:id/imagenes', authFilter.requireAuth, MutipartStorage.handleImageUpload, ProductosController.setImageProducto);
 
 /**
  * @swagger
@@ -308,6 +321,8 @@ router.post('/productos/:id/imagenes', MutipartStorage.handleImageUpload, Produc
  *     summary: Obtener una imagen asociada a un producto.
  *     description: Retorna la imagen asociada a un producto en base a su ID.
  *     tags: [Productos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -347,6 +362,6 @@ router.post('/productos/:id/imagenes', MutipartStorage.handleImageUpload, Produc
  *               fecha: "2023-11-20T03:59:22.328Z"
  *               error: Error en el servidor.
  */
-router.get('/productos/:id/imagenes', ProductosController.getImageProducto);
+router.get('/productos/:id/imagenes', authFilter.requireAuth, ProductosController.getImageProducto);
 
 module.exports = router;
