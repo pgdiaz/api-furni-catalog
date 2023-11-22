@@ -19,6 +19,6 @@ db.connect((err) => {
 });
 
 db.query('CREATE DATABASE IF NOT EXISTS furni');
-db.query('CREATE TABLE IF NOT EXISTS productos (id INT AUTO_INCREMENT PRIMARY KEY, nombre VARCHAR(255) NOT NULL, descripcion TEXT NOT NULL, precio DOUBLE NOT NULL, marca VARCHAR(50) NOT NULL, stock INT DEFAULT 0)');
+db.query('CREATE TABLE IF NOT EXISTS productos (id INT AUTO_INCREMENT PRIMARY KEY, nombre VARCHAR(255) NOT NULL, descripcion TEXT NOT NULL, precio DOUBLE NOT NULL, marca VARCHAR(50) NOT NULL, stock INT DEFAULT 0, imagen VARCHAR(255))');
 
 module.exports = db;

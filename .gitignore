@@ -131,3 +131,7 @@ dist
 
 # Visual Code
 .vscode/launch.json
+
+# Public Resources
+public/images/*
+uploads/*

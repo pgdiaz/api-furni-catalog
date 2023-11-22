@@ -63,6 +63,10 @@ class ProductosService {
         db.query('DELETE FROM productos WHERE id = ?', [id], callback);
     }
 
+    static setImageProducto(id, imagePath, callback) {
+        db.query('UPDATE productos SET imagen = ? WHERE id = ?', [imagePath, id], callback);
+    }
+
 }
 
 module.exports = ProductosService;

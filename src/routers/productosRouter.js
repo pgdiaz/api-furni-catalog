@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ProductosController = require('../controllers/productosController');
+const MutipartStorage = require('../middlewares/multipartStorage');
 
 router.use(express.json());
 
@@ -241,5 +242,111 @@ router.put('/productos/:id', ProductosController.updateProducto);
  *               $ref: "#/components/schemas/Error"
  */
 router.delete('/productos/:id', ProductosController.deleteProducto);
+
+/**
+ * @swagger
+ * /productos/{id}/imagenes:
+ *   post:
+ *     summary: Subir imagen asociada a un producto
+ *     description: Sube una imagen asociada al producto identificado por su ID.
+ *     tags: [Productos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del producto.
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               imagen:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Imagen subida correctamente.
+ *       400:
+ *         description: Error en el archivo o formato no permitido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *             example:
+ *               fecha: "2023-11-20T03:59:22.328Z"
+ *               error: Formato de archivo no permitido.
+ *       404:
+ *         description: Producto no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *             example:
+ *               fecha: "2023-11-20T03:59:22.328Z"
+ *               error: Producto no encontrado.
+ *       500:
+ *         description: Error en el servidor al cargar la imagen.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *             example:
+ *               fecha: "2023-11-20T03:59:22.328Z"
+ *               error: Error en el servidor al cargar la imagen.
+ */
+router.post('/productos/:id/imagenes', MutipartStorage.handleImageUpload, ProductosController.setImageProducto);
+
+/**
+ * @swagger
+ * /productos/{id}/imagenes:
+ *   get:
+ *     summary: Obtener una imagen asociada a un producto.
+ *     description: Retorna la imagen asociada a un producto en base a su ID.
+ *     tags: [Productos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID del producto.
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     produces:
+ *       - image/jpeg
+ *       - image/png
+ *       - image/gif
+ *     responses:
+ *       200:
+ *         description: Imagen encontrada y devuelta con éxito.
+ *         content:
+ *           'image/jpeg':
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Producto no encontrado o imagen no encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *             example:
+ *               fecha: "2023-11-20T03:59:22.328Z"
+ *               error: Producto no encontrado.
+ *       500:
+ *         description: Error en el servidor al obtener la imagen.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *             example:
+ *               fecha: "2023-11-20T03:59:22.328Z"
+ *               error: Error en el servidor.
+ */
+router.get('/productos/:id/imagenes', ProductosController.getImageProducto);
 
 module.exports = router;
